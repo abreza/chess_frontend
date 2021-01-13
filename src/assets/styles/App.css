@@ -1,0 +1,40 @@
+body {
+  /* Fix for Jumping Scrollbar */
+  margin-right: 30px;
+  overflow-y: scroll;
+}
+
+input.ltr-input,
+.ltr-input input {
+  text-align: left;
+  direction: ltr;
+}
+
+input.rtl-placeholder::placeholder,
+.rtl-placeholder input::placeholder {
+  text-align: right;
+  direction: rtl;
+}
+
+@media (max-width: 1000px) {
+  .MuiTableCell-body.MuiTableCell-root {
+    padding: 5px;
+  }
+}
+
+.MuiAlert-message {
+  width: 100%;
+}
+
+.MuiDialog-paperScrollBody.MuiDialog-paper {
+  overflow-y: hidden;
+}
+
+label.MuiFormLabel-root.Mui-focused {
+  color: #333;
+}
+
+.MuiRadio-colorSecondary.Mui-checked,
+.MuiCheckbox-colorSecondary.Mui-checked {
+  color: #fec72c !important;
+}
