@@ -1,20 +1,20 @@
 import chess from 'chess.js';
 import Chessboard from 'chessboardjsx';
+import Parse from 'parse';
 import React, { useEffect, useRef, useState } from 'react';
 
 import ChoosePromotionPieceDialog from './ChoosePromotionPieceDialog.jsx';
 import Pieces from './Pieces.jsx';
 
-export default function Board({ initPosition }) {
+export default function Board({ game }) {
   const [choosePromotionPiece, setChoosePromotionPiece] = useState(null);
-  const [fen, setFen] = useState(initPosition || 'start');
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [focusedSquare, setFocusedSquare] = useState(null);
   const [history, setHistory] = useState([]);
 
   const [squareStyles, setSquareStyles] = useState({});
 
-  const game = useRef(new chess(initPosition));
+  const logic = useRef(new chess(game.get('fen')));
 
   useEffect(() => {
     const highlightStyles = {};
@@ -52,21 +52,31 @@ export default function Board({ initPosition }) {
     });
   }, [selectedSquare, focusedSquare, history]);
 
-  const move = (options) => {
-    if (game.current.move(options) === null) return;
+  const isCorrectUserMove = (color) => {
+    const currentUserId = Parse.User.current().id;
+    return (
+      (color === 'w' && currentUserId === game.get('user1')?.id) ||
+      (color === 'b' && currentUserId === game.get('user2')?.id)
+    );
+  };
 
-    setFen(game.current.fen());
-    setHistory(game.current.history({ verbose: true }));
+  const move = async (options) => {
+    const color = logic.current.get(options.from).color;
+    if (!isCorrectUserMove(color)) return;
+    if (logic.current.move(options) === null) return;
+
+    await game.set('fen', logic.current.fen()).save();
+    setHistory(logic.current.history({ verbose: true }));
     setSelectedSquare(null);
   };
 
   const isPromotion = ({ sourceSquare, targetSquare }) => {
-    if (game.current.get(sourceSquare).type !== 'p') return false;
+    if (logic.current.get(sourceSquare).type !== 'p') return false;
     return targetSquare[1] === '8' || targetSquare[1] === '1';
   };
 
   const getValidTargets = (square) =>
-    game.current.moves({ square, verbose: true }).map((m) => m.to);
+    logic.current.moves({ square, verbose: true }).map((m) => m.to);
 
   const isValidMove = ({ sourceSquare, targetSquare }) => {
     return getValidTargets(sourceSquare).includes(targetSquare);
@@ -78,7 +88,7 @@ export default function Board({ initPosition }) {
       setChoosePromotionPiece({
         from: sourceSquare,
         to: targetSquare,
-        color: game.current.get(sourceSquare).color,
+        color: logic.current.get(sourceSquare).color,
       });
     } else {
       move({ from: sourceSquare, to: targetSquare });
@@ -116,13 +126,13 @@ export default function Board({ initPosition }) {
     <>
       <Chessboard
         width={320}
-        position={fen}
+        position={game.get('fen')}
         onDrop={onMoveRequest}
         onMouseOverSquare={onMouseOverSquare}
         onMouseOutSquare={onMouseOutSquare}
         boardStyle={{
           borderRadius: '5px',
-          boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`,
+          boxShadow: `0 2px 4px rgba(0, 0, 0, 0.5)`,
         }}
         squareStyles={squareStyles}
         dropSquareStyle={{ boxShadow: 'inset 0 0 1px 2px rgb(255, 255, 0)' }}

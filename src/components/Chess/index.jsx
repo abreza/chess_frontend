@@ -1,19 +1,13 @@
-import { Grid } from '@material-ui/core';
+import { CircularProgress, Grid } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import Board from './Board.jsx';
 
-function Chess() {
+function Chess({ game }) {
   return (
-    <Grid
-      container
-      alignItems="center"
-      justify="center"
-      style={{ height: '100vh' }}>
-      <Grid item>
-        <Board />
-      </Grid>
+    <Grid container alignItems="center" justify="center">
+      <Grid item>{game ? <Board game={game} /> : <CircularProgress />}</Grid>
     </Grid>
   );
 }
