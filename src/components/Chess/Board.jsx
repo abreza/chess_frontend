@@ -11,7 +11,7 @@ export default function Board({ game }) {
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [focusedSquare, setFocusedSquare] = useState(null);
 
-  const [logic, setLogic] = useState(null);
+  const [logic, setLogic] = useState(new chess(game.get('fen')));
   const [history, setHistory] = useState([]);
 
   const [squareStyles, setSquareStyles] = useState({});
@@ -67,22 +67,22 @@ export default function Board({ game }) {
   };
 
   const move = async (options) => {
-    const color = logic.current.get(options.from).color;
+    const color = logic.get(options.from).color;
     if (!isCorrectUserMove(color)) return;
-    if (logic.current.move(options) === null) return;
+    if (logic.move(options) === null) return;
 
-    await game.set('fen', logic.current.fen()).save();
-    setHistory(logic.current.history({ verbose: true }));
+    await game.set('fen', logic.fen()).save();
+    setHistory(logic.history({ verbose: true }));
     setSelectedSquare(null);
   };
 
   const isPromotion = ({ sourceSquare, targetSquare }) => {
-    if (logic.current.get(sourceSquare).type !== 'p') return false;
+    if (logic.get(sourceSquare).type !== 'p') return false;
     return targetSquare[1] === '8' || targetSquare[1] === '1';
   };
 
   const getValidTargets = (square) =>
-    logic.current.moves({ square, verbose: true }).map((m) => m.to);
+    logic.moves({ square, verbose: true }).map((m) => m.to);
 
   const isValidMove = ({ sourceSquare, targetSquare }) => {
     return getValidTargets(sourceSquare).includes(targetSquare);
@@ -94,7 +94,7 @@ export default function Board({ game }) {
       setChoosePromotionPiece({
         from: sourceSquare,
         to: targetSquare,
-        color: logic.current.get(sourceSquare).color,
+        color: logic.get(sourceSquare).color,
       });
     } else {
       move({ from: sourceSquare, to: targetSquare });
