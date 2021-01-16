@@ -10,11 +10,17 @@ export default function Board({ game }) {
   const [choosePromotionPiece, setChoosePromotionPiece] = useState(null);
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [focusedSquare, setFocusedSquare] = useState(null);
+
+  const [logic, setLogic] = useState(null);
   const [history, setHistory] = useState([]);
 
   const [squareStyles, setSquareStyles] = useState({});
 
-  const logic = useRef(new chess(game.get('fen')));
+  useEffect(() => {
+    const lg = new chess(game.get('fen'));
+    setLogic(lg);
+    setHistory(lg.history({ verbose: true }));
+  }, [game]);
 
   useEffect(() => {
     const highlightStyles = {};
