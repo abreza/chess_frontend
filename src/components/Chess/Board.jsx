@@ -53,7 +53,7 @@ export default function Board({ game }) {
   }, [selectedSquare, focusedSquare, history]);
 
   const isCorrectUserMove = (color) => {
-    const currentUserId = Parse.User.current().id;
+    const currentUserId = Parse.User.current()?.id;
     return (
       (color === 'w' && currentUserId === game.get('user1')?.id) ||
       (color === 'b' && currentUserId === game.get('user2')?.id)
