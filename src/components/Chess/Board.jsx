@@ -1,7 +1,7 @@
 import chess from 'chess.js';
 import Chessboard from 'chessboardjsx';
 import Parse from 'parse';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import ChoosePromotionPieceDialog from './ChoosePromotionPieceDialog.jsx';
 import Pieces from './Pieces.jsx';
