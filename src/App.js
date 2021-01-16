@@ -26,7 +26,7 @@ let liveQueryServerURL =
     : 'wss://chesss.rastaiha.ir/ws/';
 Parse.initialize('asdfEWFkej2l3kj2lfjasfjasdf9', 'AKjdfkebfj323k238s9dfsdf');
 Parse.serverURL = PARSE_SERVER_URL;
-Parse.Parse.liveQueryServerURL = liveQueryServerURL;
+Parse.liveQueryServerURL = liveQueryServerURL;
 
 const AppRout = () => (
   <SnackbarProvider>
