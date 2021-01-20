@@ -5,11 +5,11 @@ import {
   Paper,
   Typography,
 } from '@material-ui/core';
-import Parse from 'parse';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import Chess from '../components/Chess/index.jsx';
+import { getGame } from '../parse/game.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -22,16 +22,14 @@ function Game({ gameId }) {
 
   const [game, setGame] = useState(null);
   useEffect(async () => {
-    const query = new Parse.Query('Game');
-    query.equalTo('objectId', gameId);
-    const subscription = await query.subscribe();
+    const { subscription, init } = await getGame({ gameId });
     subscription.on('update', setGame);
-    setGame(await query.first());
+    setGame(init);
     return () => subscription.unsubscribe();
-  }, [gameId]);
+  }, []);
 
   return (
-    <Container maxWidth="sm" fullWidth>
+    <Container maxWidth="sm">
       <Grid
         container
         justify="center"

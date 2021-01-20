@@ -7,14 +7,14 @@ import {
   makeStyles,
   Paper,
 } from '@material-ui/core';
-import Parse from 'parse';
 import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import ActiveGames from '../components/Dialog/ActiveGames';
 import SignUpDialog from '../components/Dialog/SignUpDialog';
-import AuthContext from '../contexts/Auth/AuthContext';
+import AuthContext from '../parse/AuthContext';
+import { createGame } from '../parse/game';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -56,9 +56,6 @@ const MainHeader = () => {
   );
 };
 
-
-const Game = Parse.Object.extend('Game');
-
 function Homepage() {
   const classes = useStyles();
 
@@ -70,15 +67,14 @@ function Homepage() {
 
   const createNewGame = async () => {
     if (!getUser()) {
-      signUpAsRandomUser();
+      await signUpAsRandomUser();
     }
-    const game = new Game();
-    game.set('user1', getUser());
-    game.save().then((game) => history.push(`/game/${game.id}`));
+    const gameId = await createGame();
+    history.push(`/game/${gameId}`);
   };
 
   return (
-    <Container maxWidth="sm" fullWidth>
+    <Container maxWidth="sm">
       <Grid
         container
         justify="center"

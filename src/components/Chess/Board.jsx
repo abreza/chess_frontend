@@ -1,8 +1,8 @@
 import chess from 'chess.js';
 import Chessboard from 'chessboardjsx';
-import Parse from 'parse';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
+import AuthContext from '../../parse/AuthContext.js';
 import ChoosePromotionPieceDialog from './ChoosePromotionPieceDialog.jsx';
 import Pieces from './Pieces.jsx';
 
@@ -58,8 +58,10 @@ export default function Board({ game }) {
     });
   }, [selectedSquare, focusedSquare, history]);
 
+  const { getUser } = useContext(AuthContext);
+
   const isCorrectUserMove = (color) => {
-    const currentUserId = Parse.User.current()?.id;
+    const currentUserId = getUser()?.id;
     return (
       (color === 'w' && currentUserId === game.get('user1')?.id) ||
       (color === 'b' && currentUserId === game.get('user2')?.id)

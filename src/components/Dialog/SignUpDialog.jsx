@@ -2,14 +2,13 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
   Grid,
   TextField,
   Typography,
 } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
 
-import AuthContext from '../../contexts/Auth/AuthContext';
+import AuthContext from '../../parse/AuthContext';
 
 function SignUpDialog({ open, handleClose }) {
   const [username, setUsername] = useState();
@@ -30,13 +29,13 @@ function SignUpDialog({ open, handleClose }) {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogTitle>
-        <Typography variant="h3" align="center" gutterBottom>
-          ورود / ثبت‌نام
-        </Typography>
-      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} direction="column">
+          <Grid item>
+            <Typography variant="h3" align="center" gutterBottom>
+              ورود / ثبت‌نام
+            </Typography>
+          </Grid>
           <Grid item>
             <TextField
               label="نام کاربری"
