@@ -1,5 +1,7 @@
 import Parse from 'parse';
 
+import handleParseError from './handleParseError';
+
 const Game = Parse.Object.extend('Game');
 
 const getGamesQuery = ({ mode }) => {
@@ -17,23 +19,39 @@ const getGameQuery = ({ gameId }) => {
   return query;
 };
 
-export const getGames = async ({ mode }) =>
-  await getGamesQuery({ mode }).find();
-
+export const getGames = async ({ mode }) => {
+  try {
+    return await getGamesQuery({ mode }).find();
+  } catch (err) {
+    handleParseError(err);
+  }
+};
 export const getGame = async ({ gameId }) => {
   const query = getGameQuery({ gameId });
-  return { subscription: await query.subscribe(), init: await query.first() };
+  try {
+    return { subscription: await query.subscribe(), init: await query.first() };
+  } catch (err) {
+    handleParseError(err);
+  }
 };
 
 export const createGame = async () => {
   const game = new Game();
   game.set('user1', Parse.User.current());
-  const fetchedGame = await game.save();
-  return fetchedGame.id;
+  try {
+    const fetchedGame = await game.save();
+    return fetchedGame.id;
+  } catch (err) {
+    handleParseError(err);
+  }
 };
 
 export const joinGame = async ({ game }) => {
   game.set('user2', Parse.User.current());
-  const fetchedGame = await game.save();
-  return fetchedGame.id;
+  try {
+    const fetchedGame = await game.save();
+    return fetchedGame.id;
+  } catch (err) {
+    handleParseError(err);
+  }
 };
