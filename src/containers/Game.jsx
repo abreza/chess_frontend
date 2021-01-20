@@ -22,13 +22,13 @@ function Game({ gameId }) {
 
   const [game, setGame] = useState(null);
   useEffect(async () => {
-    let query = new Parse.Query('Game');
+    const query = new Parse.Query('Game');
     query.equalTo('objectId', gameId);
-    let subscription = await query.subscribe();
+    const subscription = await query.subscribe();
     subscription.on('update', setGame);
     setGame(await query.first());
     return () => subscription.unsubscribe();
-  }, []);
+  }, [gameId]);
 
   return (
     <Container maxWidth="sm" fullWidth>

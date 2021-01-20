@@ -9,34 +9,41 @@ import { connect } from 'react-redux';
 import { IntlProvider } from 'react-redux-multilingual';
 
 import Notifier from './components/Notifications/Notifications.jsx';
+import AuthContextProvider from './contexts/Auth/AuthContextProvider';
 import Root from './root/Root.jsx';
 import MuiTheme from './theme/MuiTheme';
 import RTLMuiTheme from './theme/RTLMuiTheme';
 import translations from './translations';
 import jss from './utils/jssRTL';
 
-let PARSE_SERVER_URL =
-  process.env.NODE_ENV === 'development'
+const initParseServer = () => {
+  let PARSE_SERVER_URL =
+    process.env.NODE_ENV === 'development'
     ? 'http://localhost/parse_server'
-    : 'https://chesss.rastaiha.ir/parse_server';
+      : 'https://chesss.rastaiha.ir/parse_server';
 
-let liveQueryServerURL =
-  process.env.NODE_ENV === 'development'
+  let liveQueryServerURL =
+    process.env.NODE_ENV === 'development'
     ? 'ws://localhost/ws/'
-    : 'wss://chesss.rastaiha.ir/ws/';
-Parse.initialize('asdfEWFkej2l3kj2lfjasfjasdf9', 'AKjdfkebfj323k238s9dfsdf');
-Parse.serverURL = PARSE_SERVER_URL;
-Parse.liveQueryServerURL = liveQueryServerURL;
+      : 'wss://chesss.rastaiha.ir/ws/';
+  Parse.initialize('asdfEWFkej2l3kj2lfjasfjasdf9', 'AKjdfkebfj323k238s9dfsdf');
+  Parse.serverURL = PARSE_SERVER_URL;
+  Parse.liveQueryServerURL = liveQueryServerURL;
+};
 
 const AppRout = () => (
   <SnackbarProvider>
     <Notifier />
-    <Root />
+    <AuthContextProvider>
+      <Root />
+    </AuthContextProvider>
   </SnackbarProvider>
 );
 
 const App = ({ dir }) => {
   document.body.dir = dir;
+
+  initParseServer();
 
   return (
     <IntlProvider translations={translations}>

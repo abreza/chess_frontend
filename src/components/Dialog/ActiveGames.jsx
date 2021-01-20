@@ -7,44 +7,49 @@ import {
   Typography,
 } from '@material-ui/core';
 import Parse from 'parse';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+
+import AuthContext from '../../contexts/Auth/AuthContext';
 
 function ActiveGames({ open, handleClose, mode }) {
   const [games, setGames] = useState([]);
 
   useEffect(async () => {
     if (!open) return;
-    let query = new Parse.Query('Game');
-
+    const query = new Parse.Query('Game');
     if (mode === 'play') {
       query.doesNotExist('user2');
     }
-
-    let subscription = await query.subscribe();
+    query.include(['user1', 'user2']);
+    const subscription = await query.subscribe();
     subscription.on('update', setGames);
-
     setGames(await query.find());
-
     return () => subscription.unsubscribe();
   }, [open, mode]);
 
   const history = useHistory();
 
+  const getUsername = (game, user) =>
+    game?.get(user)?.get('username') || '-----------';
+
   const getGameText = (game) => {
     if (!game) return;
-    if (mode === 'play')
-      return `${game.id}: ${game?.get('user1')?.get('username')}`;
-    return `${game.id}: ${game?.get('user1')?.get('username')} | ${game
-      ?.get('user2')
-      ?.get('username')}`;
+    return (
+      <div>
+        <div>{game.id}</div>
+        <span>
+          {getUsername(game, 'user1')} | {getUsername(game, 'user2')}
+        </span>
+      </div>
+    );
   };
 
+  const { getUser, signUpAsRandomUser } = useContext(AuthContext);
+
   const joinGame = async (game) => {
-    if (!Parse.User.current()) {
-      await new Parse.User({
-        username: `p${Date.now()}${Math.floor(Math.random() * 100)}`,
-      }).signUp();
+    if (!getUser()) {
+      signUpAsRandomUser();
     }
     game.set('user2', Parse.User.current());
     game.save().then((game) => history.push(`/game/${game.id}`));

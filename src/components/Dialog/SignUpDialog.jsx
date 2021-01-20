@@ -7,20 +7,18 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import Parse from 'parse';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+
+import AuthContext from '../../contexts/Auth/AuthContext';
 
 function SignUpDialog({ open, handleClose }) {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
 
+  const { loginOrSignUp } = useContext(AuthContext);
+
   const submit = () =>
-    Parse.User.logIn(username, password, {
-      usePost: true,
-    })
-      .catch(() => {
-        return new Parse.User({ username, password }).signUp();
-      })
+    loginOrSignUp(username, password)
       .then(() => {
         handleClose();
       })
@@ -63,7 +61,7 @@ function SignUpDialog({ open, handleClose }) {
               variant="contained"
               color="primary"
               fullWidth
-              onClick={() => submit()}>
+              onClick={submit}>
               ثبت
             </Button>
           </Grid>

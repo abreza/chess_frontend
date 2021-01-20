@@ -8,12 +8,13 @@ import {
   Paper,
 } from '@material-ui/core';
 import Parse from 'parse';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import ActiveGames from '../components/Dialog/ActiveGames';
 import SignUpDialog from '../components/Dialog/SignUpDialog';
+import AuthContext from '../contexts/Auth/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -21,29 +22,58 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const MainHeader = () => {
+  const [openSignUp, setOpenSignUp] = useState(false);
+  const { logout, getUser } = useContext(AuthContext);
+  const user = getUser();
+
+  return (
+    <Grid container justify="space-between">
+      {user ? (
+        <>
+          <Grid item>سلام {user.get('username')}</Grid>
+          <Grid item>
+            <Button variant="outlined" color="primary" onClick={logout}>
+              خروج
+            </Button>
+          </Grid>
+        </>
+      ) : (
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setOpenSignUp(true)}>
+            ورود / ثبت‌نام
+          </Button>
+        </Grid>
+      )}
+      <SignUpDialog
+        open={openSignUp}
+        handleClose={() => setOpenSignUp(false)}
+      />
+    </Grid>
+  );
+};
+
+
+const Game = Parse.Object.extend('Game');
+
 function Homepage() {
   const classes = useStyles();
 
-  const [openSignUp, setOpenSignUp] = useState(false);
-
   const [activeGameMode, setActiveGameMode] = useState(false);
-
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const history = useHistory();
 
-  const currentUser = Parse.User.current();
+  const { getUser, signUpAsRandomUser } = useContext(AuthContext);
 
   const createNewGame = async () => {
-    if (!Parse.User.current()) {
-      await new Parse.User({
-        username: `p${Date.now()}${Math.floor(Math.random() * 100)}`,
-      }).signUp();
+    if (!getUser()) {
+      signUpAsRandomUser();
     }
-    const Game = Parse.Object.extend('Game');
     const game = new Game();
-    game.set('user1', Parse.User.current());
+    game.set('user1', getUser());
     game.save().then((game) => history.push(`/game/${game.id}`));
   };
 
@@ -56,33 +86,7 @@ function Homepage() {
         style={{ minHeight: '100vh' }}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Grid container justify="space-between">
-              {currentUser ? (
-                <>
-                  <Grid item>سلام {currentUser.get('username')}</Grid>
-                  <Grid item>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={async () => {
-                        await Parse.User.logOut();
-                        forceUpdate();
-                      }}>
-                      خروج
-                    </Button>
-                  </Grid>
-                </>
-              ) : (
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => setOpenSignUp(true)}>
-                    ورود / ثبت‌نام
-                  </Button>
-                </Grid>
-              )}
-            </Grid>
+            <MainHeader />
             <Box my={3}>
               <Divider />
             </Box>
@@ -118,10 +122,6 @@ function Homepage() {
           </Paper>
         </Grid>
       </Grid>
-      <SignUpDialog
-        open={openSignUp}
-        handleClose={() => setOpenSignUp(false)}
-      />
       <ActiveGames
         open={!!activeGameMode}
         handleClose={() => setActiveGameMode('')}
