@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import ActiveGames from '../components/Dialog/ActiveGames';
+import RatingDialog from '../components/Dialog/RatingDialog';
 import SignUpDialog from '../components/Dialog/SignUpDialog';
 import AuthContext from '../parse/AuthContext';
 import { createGame } from '../parse/game';
@@ -61,6 +62,8 @@ function Homepage() {
 
   const [activeGameMode, setActiveGameMode] = useState(false);
 
+  const [openDialog, setOpenDialog] = useState(false);
+
   const history = useHistory();
 
   const { getUser, signUpAsRandomUser } = useContext(AuthContext);
@@ -71,6 +74,10 @@ function Homepage() {
     }
     const gameId = await createGame();
     history.push(`/game/${gameId}`);
+  };
+
+  const viewPlayers = () => {
+    setOpenDialog(true);
   };
 
   return (
@@ -114,10 +121,22 @@ function Homepage() {
                   تماشای بازی
                 </Button>
               </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => viewPlayers()}>
+                  رتبه‌بندی بازیکنان
+                </Button>
+              </Grid>
             </Grid>
           </Paper>
         </Grid>
       </Grid>
+      <RatingDialog 
+        open={openDialog}
+        onClose={()=> setOpenDialog(false)}/>
       <ActiveGames
         open={!!activeGameMode}
         handleClose={() => setActiveGameMode('')}
