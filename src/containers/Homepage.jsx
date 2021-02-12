@@ -32,7 +32,7 @@ const MainHeader = () => {
     <Grid container justify="space-between">
       {user ? (
         <>
-          <Grid item>سلام {user.get('username')}</Grid>
+          <Grid item>سلام {user.username}</Grid>
           <Grid item>
             <Button variant="outlined" color="primary" onClick={logout}>
               خروج
@@ -134,9 +134,7 @@ function Homepage() {
           </Paper>
         </Grid>
       </Grid>
-      <RatingDialog 
-        open={openDialog}
-        onClose={()=> setOpenDialog(false)}/>
+      <RatingDialog open={openDialog} onClose={() => setOpenDialog(false)} />
       <ActiveGames
         open={!!activeGameMode}
         handleClose={() => setActiveGameMode('')}
