@@ -33,6 +33,7 @@ export default function AuthContextProvider({ children }) {
     const user = new Parse.User.current();
     try {
       return {
+        id: user.id,
         username: user.get('username'),
       };
     } catch (error) {
