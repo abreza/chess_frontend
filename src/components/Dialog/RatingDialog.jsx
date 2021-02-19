@@ -1,5 +1,4 @@
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import { blue } from '@material-ui/core/colors';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -8,7 +7,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
 import PropTypes from 'prop-types';
@@ -35,11 +33,17 @@ function RatingDialog(props) {
   };
 
   return (
-    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+    <Dialog
+      onClose={handleClose}
+      aria-labelledby="simple-dialog-title"
+      open={open}>
       <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
       <List>
         {emails.map((email) => (
-          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
+          <ListItem
+            button
+            onClick={() => handleListItemClick(email)}
+            key={email}>
             <ListItemAvatar>
               <Avatar className={classes.avatar}>
                 <PersonIcon />
@@ -49,7 +53,10 @@ function RatingDialog(props) {
           </ListItem>
         ))}
 
-        <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
+        <ListItem
+          autoFocus
+          button
+          onClick={() => handleListItemClick('addAccount')}>
           <ListItemAvatar>
             <Avatar>
               <AddIcon />
