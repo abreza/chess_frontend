@@ -12,7 +12,8 @@ import { useHistory } from 'react-router';
 
 import ActiveGames from '../components/Dialog/ActiveGames';
 import RatingDialog from '../components/Dialog/RatingDialog';
-import SignUpDialog from '../components/Dialog/SignUpDialog';
+import LoggedInArea from '../components/SpecificPages/Hompage/LoggedInArea';
+import MainHeader from '../components/SpecificPages/Hompage/MainHeader';
 import AuthContext from '../parse/AuthContext';
 import { createGame } from '../parse/game';
 
@@ -22,63 +23,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MainHeader = () => {
-  const [openSignUp, setOpenSignUp] = useState(false);
-  const { logout, getUser } = useContext(AuthContext);
-  const username = getUser()?.username;
-
-  return (
-    <Grid container justify="space-between">
-      {username ? (
-        <>
-          <Grid item>سلام {username}</Grid>
-          <Grid item>
-            <Button variant="outlined" color="primary" onClick={logout}>
-              خروج
-            </Button>
-          </Grid>
-        </>
-      ) : (
-        <Grid item>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setOpenSignUp(true)}>
-            ورود / ثبت‌نام
-          </Button>
-        </Grid>
-      )}
-      <SignUpDialog
-        open={openSignUp}
-        handleClose={() => setOpenSignUp(false)}
-      />
-    </Grid>
-  );
-};
-
 function Homepage() {
   const classes = useStyles();
 
   const [activeGameMode, setActiveGameMode] = useState(false);
-
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openRating, setOpenRating] = useState(false);
 
   const history = useHistory();
 
   const { getUser, signUpAsRandomUser } = useContext(AuthContext);
 
+  const user = getUser();
+
   const createNewGame = async () => {
-    if (!getUser()) {
+    if (!user) {
       await signUpAsRandomUser();
     }
     const gameId = await createGame();
     if (gameId) {
       history.push(`/game/${gameId}`);
     }
-  };
-
-  const viewPlayers = () => {
-    setOpenDialog(true);
   };
 
   return (
@@ -113,6 +77,7 @@ function Homepage() {
                   اضافه شدن به بازی
                 </Button>
               </Grid>
+
               <Grid item>
                 <Button
                   variant="contained"
@@ -122,20 +87,30 @@ function Homepage() {
                   تماشای بازی
                 </Button>
               </Grid>
+              {user && <LoggedInArea user={user} />}
               <Grid item>
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={() => viewPlayers()}>
+                  onClick={() => setActiveGameMode('watch')}>
                   رتبه‌بندی بازیکنان
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => setActiveGameMode('watch')}>
+                  بازی‌های انجام شده
                 </Button>
               </Grid>
             </Grid>
           </Paper>
         </Grid>
       </Grid>
-      <RatingDialog open={openDialog} onClose={() => setOpenDialog(false)} />
+      <RatingDialog open={openRating} onClose={() => setOpenRating(false)} />
       <ActiveGames
         open={!!activeGameMode}
         handleClose={() => setActiveGameMode('')}
