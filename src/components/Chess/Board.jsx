@@ -6,7 +6,7 @@ import AuthContext from '../../parse/AuthContext.js';
 import ChoosePromotionPieceDialog from './ChoosePromotionPieceDialog.jsx';
 import Pieces from './Pieces.jsx';
 
-const runMoves = (moves) => {
+const runMoves = (moves = []) => {
   const logic = new chess(
     'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
   );
