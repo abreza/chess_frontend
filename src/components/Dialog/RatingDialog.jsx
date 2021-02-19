@@ -1,3 +1,4 @@
+import { ListItemSecondaryAction } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { blue } from '@material-ui/core/colors';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,61 +8,80 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
+import { getAllPlayers } from '../../parse/players';
+
 const useStyles = makeStyles({
   avatar: {
     backgroundColor: blue[100],
     color: blue[600],
   },
+  header: {
+    backgroundColor: blue[100],
+  },
+  badge: {
+    width: 30,
+  },
 });
 
-function RatingDialog({ onClose, selectedValue, open }) {
+const IMAGES = {
+  THREE_CONSECUTIVE_WINS: process.env.PUBLIC_URL + 'winner.svg',
+  FIVE_SCORE: process.env.PUBLIC_URL + 'badge.svg',
+};
+
+function RatingDialog({ onClose, open }) {
   const classes = useStyles();
 
-  const handleClose = () => {
-    onClose(selectedValue);
-  };
+  const [players, setPlayers] = useState([]);
 
-  const handleListItemClick = (value) => {
-    onClose(value);
-  };
+  useEffect(async () => {
+    if (open) {
+      setPlayers(await getAllPlayers());
+    }
+  }, [open]);
 
   return (
-    <Dialog
-      onClose={handleClose}
-      aria-labelledby="simple-dialog-title"
-      open={open}>
-      <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
+    <Dialog onClose={onClose} open={open} maxWidth="xs" fullWidth>
+      <DialogTitle>رتبه بندی</DialogTitle>
       <List>
-        {emails.map((email) => (
-          <ListItem
-            button
-            onClick={() => handleListItemClick(email)}
-            key={email}>
-            <ListItemAvatar>
-              <Avatar className={classes.avatar}>
-                <PersonIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={email} />
-          </ListItem>
-        ))}
-
-        <ListItem
-          autoFocus
-          button
-          onClick={() => handleListItemClick('addAccount')}>
-          <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Add account" />
+        <ListItem className={classes.header}>
+          <ListItemAvatar></ListItemAvatar>
+          <ListItemText primary="کاربر" secondary="امتیاز" />
+          <ListItemSecondaryAction>نشان</ListItemSecondaryAction>
         </ListItem>
+        {players
+          .sort((a, b) => {
+            return a.get('score') > b.get('score');
+          })
+          .map((player) => (
+            <ListItem key={player.id}>
+              <ListItemAvatar>
+                <Avatar className={classes.avatar}>
+                  <PersonIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={player.get('username')}
+                secondary={'امتیاز ' + player.get('score')}
+              />
+              <ListItemSecondaryAction>
+                {player.get('badges')?.length > 0
+                  ? player
+                      .get('badges')
+                      .map((badge) => (
+                        <img
+                          key={badge}
+                          src={IMAGES[badge]}
+                          alt={badge}
+                          className={classes.badge}
+                        />
+                      ))
+                  : 'ندارد'}
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
       </List>
     </Dialog>
   );

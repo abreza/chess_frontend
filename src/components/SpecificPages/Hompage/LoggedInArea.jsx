@@ -42,15 +42,6 @@ const LoggedInArea = ({ user }) => {
           انتخاب حریف
         </Button>
       </Grid>
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={() => setOpenPlayers(false)}>
-          نشان‌های من
-        </Button>
-      </Grid>
       <PlayersDialog open={openPlayers} onClose={() => setOpenPlayers(false)} />
       <RequestDialog request={request} onClose={() => setRequest(false)} />
     </>

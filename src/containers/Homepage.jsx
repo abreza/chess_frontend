@@ -93,7 +93,7 @@ function Homepage() {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={() => setActiveGameMode('watch')}>
+                  onClick={() => setOpenRating(true)}>
                   رتبه‌بندی بازیکنان
                 </Button>
               </Grid>
