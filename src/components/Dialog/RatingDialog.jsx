@@ -9,7 +9,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
@@ -20,9 +19,8 @@ const useStyles = makeStyles({
   },
 });
 
-function RatingDialog(props) {
+function RatingDialog({ onClose, selectedValue, open }) {
   const classes = useStyles();
-  const { onClose, selectedValue, open } = props;
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -68,11 +66,5 @@ function RatingDialog(props) {
     </Dialog>
   );
 }
-
-RatingDialog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired,
-};
 
 export default RatingDialog;
