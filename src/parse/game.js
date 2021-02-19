@@ -2,8 +2,6 @@ import Parse from 'parse';
 
 import handleParseError from './handleParseError';
 
-const Game = Parse.Object.extend('Game');
-
 const getGamesQuery = ({ mode }) => {
   const query = new Parse.Query('Game');
   if (mode === 'play') {
@@ -36,18 +34,11 @@ export const getGame = async ({ gameId }) => {
 };
 
 export const createGame = async () => {
-  const game = new Game();
-  game.set('user1', Parse.User.current());
-  try {
-    const fetchedGame = await game.save();
-    return fetchedGame.id;
-  } catch (err) {
-    handleParseError(err);
-  }
+  return await Parse.Cloud.run('createGame');
 };
 
 export const joinGame = async ({ gameId }) => {
-  await Parse.Cloud.run('join', { gameId });
+  await Parse.Cloud.run('joinGame', { gameId });
 };
 
 export const move = async (move, gameId) => {
