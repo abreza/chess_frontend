@@ -8,7 +8,6 @@ import {
   Paper,
 } from '@material-ui/core';
 import React, { useContext, useState } from 'react';
-import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import ActiveGames from '../components/Dialog/ActiveGames';
@@ -26,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
 const MainHeader = () => {
   const [openSignUp, setOpenSignUp] = useState(false);
   const { logout, getUser } = useContext(AuthContext);
-  const user = getUser();
+  const username = getUser()?.username;
 
   return (
     <Grid container justify="space-between">
-      {user ? (
+      {username ? (
         <>
-          <Grid item>سلام {user.username}</Grid>
+          <Grid item>سلام {username}</Grid>
           <Grid item>
             <Button variant="outlined" color="primary" onClick={logout}>
               خروج
@@ -73,7 +72,9 @@ function Homepage() {
       await signUpAsRandomUser();
     }
     const gameId = await createGame();
-    history.push(`/game/${gameId}`);
+    if (gameId) {
+      history.push(`/game/${gameId}`);
+    }
   };
 
   const viewPlayers = () => {
@@ -144,4 +145,4 @@ function Homepage() {
   );
 }
 
-export default connect()(Homepage);
+export default Homepage;
