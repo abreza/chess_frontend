@@ -6,6 +6,10 @@ const getGamesQuery = ({ mode }) => {
   const query = new Parse.Query('Game');
   if (mode === 'play') {
     query.doesNotExist('user2');
+  } else if (mode === 'watch') {
+    query.equalTo('state', 'ON_GOING');
+  } else if (mode === 'old') {
+    query.notContainedIn('state', ['NOT_STARTED', 'ON_GOING']);
   }
   query.include(['user1', 'user2']);
   return query;

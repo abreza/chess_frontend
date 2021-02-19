@@ -102,7 +102,7 @@ function Homepage() {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={() => setActiveGameMode('watch')}>
+                  onClick={() => setActiveGameMode('old')}>
                   بازی‌های انجام شده
                 </Button>
               </Grid>
