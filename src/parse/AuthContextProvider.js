@@ -48,7 +48,8 @@ export default function AuthContextProvider({ children }) {
       .catch(() => {
         return new Parse.User({ username, password }).signUp();
       })
-      .catch(handleParseError);
+      .catch(handleParseError)
+      .then(forceUpdate);
 
   const signUpAsRandomUser = async () => {
     const random = `p${Date.now()}${Math.floor(Math.random() * 100)}`;
