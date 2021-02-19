@@ -43,7 +43,8 @@ function ActiveGames({ open, handleClose, mode }) {
     if (!getUser()) {
       await signUpAsRandomUser();
     }
-    const gameId = await joinGame({ game });
+    const gameId = game.id;
+    await joinGame({ gameId });
     history.push(`/game/${gameId}`);
   };
 
@@ -56,28 +57,29 @@ function ActiveGames({ open, handleClose, mode }) {
               لیست بازی‌ها
             </Typography>
           </Grid>
-          {games.map((game) => (
-            <Grid item key={game.id}>
-              {mode === 'play' ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={() => join(game)}>
-                  {getGameText(game)}
-                </Button>
-              ) : (
-                <Button
-                  component={Link}
-                  to={`/game/${game.id}`}
-                  variant="contained"
-                  color="primary"
-                  fullWidth>
-                  {getGameText(game)}
-                </Button>
-              )}
-            </Grid>
-          ))}
+          {games &&
+            games.map((game) => (
+              <Grid item key={game.id}>
+                {mode === 'play' ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => join(game)}>
+                    {getGameText(game)}
+                  </Button>
+                ) : (
+                  <Button
+                    component={Link}
+                    to={`/game/${game.id}`}
+                    variant="contained"
+                    color="primary"
+                    fullWidth>
+                    {getGameText(game)}
+                  </Button>
+                )}
+              </Grid>
+            ))}
         </Grid>
       </DialogContent>
     </Dialog>

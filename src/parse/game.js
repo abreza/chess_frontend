@@ -46,12 +46,10 @@ export const createGame = async () => {
   }
 };
 
-export const joinGame = async ({ game }) => {
-  game.set('user2', Parse.User.current());
-  try {
-    const fetchedGame = await game.save();
-    return fetchedGame.id;
-  } catch (err) {
-    handleParseError(err);
-  }
+export const joinGame = async ({ gameId }) => {
+  await Parse.Cloud.run('join', { gameId });
+};
+
+export const move = async (move, gameId) => {
+  await Parse.Cloud.run('move', { move, gameId });
 };

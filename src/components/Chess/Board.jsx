@@ -1,26 +1,34 @@
 import chess from 'chess.js';
 import Chessboard from 'chessboardjsx';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import AuthContext from '../../parse/AuthContext.js';
 import ChoosePromotionPieceDialog from './ChoosePromotionPieceDialog.jsx';
 import Pieces from './Pieces.jsx';
 
-export default function Board({ game }) {
+const runMoves = (moves) => {
+  const logic = new chess(
+    'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+  );
+  moves.forEach((mv) => logic.move(mv));
+  return logic;
+};
+
+export default function Board({ moves = [], user1, user2, updateMoves }) {
   const [choosePromotionPiece, setChoosePromotionPiece] = useState(null);
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [focusedSquare, setFocusedSquare] = useState(null);
 
-  const [logic, setLogic] = useState(new chess(game.get('fen')));
+  const logic = useRef(runMoves(moves));
+
   const [history, setHistory] = useState([]);
 
   const [squareStyles, setSquareStyles] = useState({});
 
   useEffect(() => {
-    const lg = new chess(game.get('fen'));
-    setLogic(lg);
-    setHistory(lg.history({ verbose: true }));
-  }, [game]);
+    logic.current = runMoves(moves);
+    setHistory(logic.current.history({ verbose: true }));
+  }, [moves]);
 
   useEffect(() => {
     const highlightStyles = {};
@@ -60,31 +68,30 @@ export default function Board({ game }) {
 
   const { getUser } = useContext(AuthContext);
 
-  const isCorrectUserMove = (color) => {
+  const isCorrectUserMove = () => {
+    const turn = moves.length % 2;
     const currentUserId = getUser()?.id;
-    return (
-      (color === 'w' && currentUserId === game.get('user1')?.id) ||
-      (color === 'b' && currentUserId === game.get('user2')?.id)
-    );
+    if (!currentUserId) return false;
+    if (turn === 0) return currentUserId === user1?.id;
+    return currentUserId === user2?.id;
   };
 
   const move = async (options) => {
-    const color = logic.get(options.from).color;
-    if (!isCorrectUserMove(color)) return;
-    if (logic.move(options) === null) return;
+    if (!isCorrectUserMove()) return;
+    if (logic.current.move(options) === null) return;
 
-    await game.set('fen', logic.fen()).save();
-    setHistory(logic.history({ verbose: true }));
+    setHistory(logic.current.history({ verbose: true }));
     setSelectedSquare(null);
+    await updateMoves(options);
   };
 
   const isPromotion = ({ sourceSquare, targetSquare }) => {
-    if (logic.get(sourceSquare).type !== 'p') return false;
+    if (logic.current.get(sourceSquare).type !== 'p') return false;
     return targetSquare[1] === '8' || targetSquare[1] === '1';
   };
 
   const getValidTargets = (square) =>
-    logic.moves({ square, verbose: true }).map((m) => m.to);
+    logic.current.moves({ square, verbose: true }).map((m) => m.to);
 
   const isValidMove = ({ sourceSquare, targetSquare }) => {
     return getValidTargets(sourceSquare).includes(targetSquare);
@@ -96,7 +103,7 @@ export default function Board({ game }) {
       setChoosePromotionPiece({
         from: sourceSquare,
         to: targetSquare,
-        color: logic.get(sourceSquare).color,
+        color: logic.current.get(sourceSquare).color,
       });
     } else {
       move({ from: sourceSquare, to: targetSquare });
@@ -130,11 +137,14 @@ export default function Board({ game }) {
     move(moveOption);
   };
 
+  const draggable = isCorrectUserMove();
+
   return (
     <>
       <Chessboard
         width={320}
-        position={game.get('fen')}
+        position={logic.current.fen()}
+        draggable={draggable}
         onDrop={onMoveRequest}
         onMouseOverSquare={onMouseOverSquare}
         onMouseOutSquare={onMouseOutSquare}
