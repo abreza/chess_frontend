@@ -54,7 +54,13 @@ function ActiveGames({ open, handleClose, mode }) {
         <Grid container spacing={2} direction="column">
           <Grid item>
             <Typography variant="h3" align="center" gutterBottom>
-              لیست بازی‌ها
+              {mode === 'play'
+                ? 'بازی‌ها در حال انتظار'
+                : mode === 'watch'
+                ? 'بازی‌ها در حال انجام'
+                : mode === 'old'
+                ? 'بازی‌ها پایان یافته'
+                : ''}
             </Typography>
           </Grid>
           {games &&
