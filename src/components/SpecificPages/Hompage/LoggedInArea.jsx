@@ -1,4 +1,5 @@
 import { Button, Grid } from '@material-ui/core';
+import { SportsKabaddi } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
@@ -38,6 +39,7 @@ const LoggedInArea = ({ user }) => {
           variant="contained"
           color="primary"
           fullWidth
+          endIcon={<SportsKabaddi />}
           onClick={() => setOpenPlayers(true)}>
           انتخاب حریف
         </Button>

@@ -4,9 +4,17 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   makeStyles,
   Paper,
 } from '@material-ui/core';
+import {
+  Add as AddIcon,
+  EmojiEvents,
+  History,
+  SupervisorAccount,
+  Visibility,
+} from '@material-ui/icons';
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 
@@ -64,6 +72,7 @@ function Homepage() {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  endIcon={<AddIcon />}
                   onClick={createNewGame}>
                   ساخت بازی جدید
                 </Button>
@@ -73,6 +82,7 @@ function Homepage() {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  endIcon={<SupervisorAccount />}
                   onClick={() => setActiveGameMode('play')}>
                   اضافه شدن به بازی
                 </Button>
@@ -83,28 +93,29 @@ function Homepage() {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  endIcon={<Visibility />}
                   onClick={() => setActiveGameMode('watch')}>
                   تماشای بازی
                 </Button>
               </Grid>
               {user && <LoggedInArea user={user} />}
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={() => setOpenRating(true)}>
-                  رتبه‌بندی بازیکنان
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={() => setActiveGameMode('old')}>
-                  بازی‌های انجام شده
-                </Button>
+              <Grid item container justify="space-between">
+                <Grid item>
+                  <IconButton
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => setOpenRating(true)}>
+                    <EmojiEvents />
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <IconButton
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => setActiveGameMode('old')}>
+                    <History />
+                  </IconButton>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>
