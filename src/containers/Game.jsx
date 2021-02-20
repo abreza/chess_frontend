@@ -1,16 +1,18 @@
 import {
+  Button,
   Container,
   Grid,
   makeStyles,
   Paper,
   Typography,
 } from '@material-ui/core';
+import { Flag as FlagIcon } from '@material-ui/icons';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import Chess from '../components/Chess/index.jsx';
-import { getGame } from '../parse/game.js';
+import { getGame, resignGame } from '../parse/game.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -115,9 +117,16 @@ function Game({ gameId }) {
             <div className={classes.chess}>
               <Chess game={game} />
             </div>
-            <Typography variant="h3" align="center">
+            <Typography variant="h3" gutterBottom align="center">
               {game?.get('user1')?.get('username')}
             </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              endIcon={<FlagIcon />}
+              onClick={async () => await resignGame(gameId)}>
+              تسلیم
+            </Button>
           </Paper>
         </Grid>
       </Grid>

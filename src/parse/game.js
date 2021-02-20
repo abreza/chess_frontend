@@ -38,13 +38,33 @@ export const getGame = async ({ gameId }) => {
 };
 
 export const createGame = async () => {
-  return await Parse.Cloud.run('createGame');
+  try {
+    return await Parse.Cloud.run('createGame');
+  } catch (err) {
+    handleParseError(err);
+  }
 };
 
 export const joinGame = async ({ gameId }) => {
-  await Parse.Cloud.run('joinGame', { gameId });
+  try {
+    await Parse.Cloud.run('joinGame', { gameId });
+  } catch (err) {
+    handleParseError(err);
+  }
 };
 
 export const move = async (move, gameId) => {
-  await Parse.Cloud.run('move', { move, gameId });
+  try {
+    await Parse.Cloud.run('move', { move, gameId });
+  } catch (err) {
+    handleParseError(err);
+  }
+};
+
+export const resignGame = async (gameId) => {
+  try {
+    await Parse.Cloud.run('resignGame', { gameId });
+  } catch (err) {
+    handleParseError(err);
+  }
 };
