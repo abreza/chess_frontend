@@ -12,6 +12,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import React, { useEffect, useState } from 'react';
 
 import { getAllPlayers } from '../../parse/players';
+import MouseOverPopover from '../popover/Hover';
 
 const useStyles = makeStyles({
   avatar: {
@@ -27,8 +28,14 @@ const useStyles = makeStyles({
 });
 
 const IMAGES = {
-  THREE_CONSECUTIVE_WINS: process.env.PUBLIC_URL + 'winner.svg',
-  FIVE_SCORE: process.env.PUBLIC_URL + 'badge.svg',
+  THREE_CONSECUTIVE_WINS: {
+    img: process.env.PUBLIC_URL + 'winner.svg',
+    text: 'پیروزی ۳ بار پشت هم!',
+  },
+  FIVE_SCORE: {
+    img: process.env.PUBLIC_URL + 'badge.svg',
+    text: 'کسب ۵ امتیاز!',
+  },
 };
 
 function RatingDialog({ onClose, open }) {
@@ -36,11 +43,23 @@ function RatingDialog({ onClose, open }) {
 
   const [players, setPlayers] = useState([]);
 
+  const [anchorEl, setAnchorEl] = useState();
+  const [text, setText] = useState('');
+
   useEffect(async () => {
     if (open) {
       setPlayers(await getAllPlayers());
     }
   }, [open]);
+
+  const handlePopoverOpen = (event, text) => {
+    setAnchorEl(event.currentTarget);
+    setText(text);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <Dialog onClose={onClose} open={open} maxWidth="xs" fullWidth>
@@ -70,8 +89,12 @@ function RatingDialog({ onClose, open }) {
                       .get('badges')
                       .map((badge) => (
                         <img
+                          onMouseEnter={(event) =>
+                            handlePopoverOpen(event, IMAGES[badge].text)
+                          }
+                          onMouseLeave={handlePopoverClose}
                           key={badge}
-                          src={IMAGES[badge]}
+                          src={IMAGES[badge].img}
                           alt={badge}
                           className={classes.badge}
                         />
@@ -81,6 +104,11 @@ function RatingDialog({ onClose, open }) {
             </ListItem>
           ))}
       </List>
+      <MouseOverPopover
+        anchorEl={anchorEl}
+        handlePopoverClose={handlePopoverClose}
+        text={text}
+      />
     </Dialog>
   );
 }
