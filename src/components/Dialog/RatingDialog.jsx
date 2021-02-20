@@ -81,7 +81,7 @@ function RatingDialog({ onClose, open }) {
               </ListItemAvatar>
               <ListItemText
                 primary={player.get('username')}
-                secondary={'امتیاز ' + player.get('score')}
+                secondary={'امتیاز ' + (player.get('score') || 0)}
               />
               <ListItemSecondaryAction>
                 {player.get('badges')?.length > 0
