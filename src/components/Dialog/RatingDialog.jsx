@@ -71,7 +71,7 @@ function RatingDialog({ onClose, open }) {
           <ListItemSecondaryAction>نشان</ListItemSecondaryAction>
         </ListItem>
         {players
-          .sort((a, b) => b.get('score') - a.get('score'))
+          .sort((a, b) => (b.get('score') || 0) - (a.get('score') || 0))
           .map((player) => (
             <ListItem key={player.id}>
               <ListItemAvatar>
