@@ -14,7 +14,13 @@ const runMoves = (moves = []) => {
   return logic;
 };
 
-export default function Board({ moves = [], user1, user2, updateMoves }) {
+export default function Board({
+  moves = [],
+  user1,
+  user2,
+  updateMoves,
+  state,
+}) {
   const [choosePromotionPiece, setChoosePromotionPiece] = useState(null);
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [focusedSquare, setFocusedSquare] = useState(null);
@@ -69,6 +75,7 @@ export default function Board({ moves = [], user1, user2, updateMoves }) {
   const { getUser } = useContext(AuthContext);
 
   const isCorrectUserMove = () => {
+    if (state !== 'ON_GOING') return false;
     const turn = moves.length % 2;
     const currentUserId = getUser()?.id;
     if (!currentUserId) return false;

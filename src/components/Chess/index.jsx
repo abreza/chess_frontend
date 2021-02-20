@@ -15,6 +15,7 @@ function Chess({ game }) {
             user1={game.get('user1')}
             user2={game.get('user2')}
             updateMoves={(mv) => move(mv, game.id)}
+            state={game.get('state')}
           />
         ) : (
           <CircularProgress />
